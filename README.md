@@ -142,7 +142,7 @@ endmodule
 
 <h3>Output Waveform</h3>
 
-![image]()
+![image](https://github.com/subhashspace/FSM_for_Sequence_Detector/blob/main/mealy_1011.png)
 
 # Moore 1011
 
@@ -232,7 +232,7 @@ endmodule
 
 <h3>Output Waveform</h3>
 
-![image]()
+![image](https://github.com/subhashspace/FSM_for_Sequence_Detector/blob/main/moore_1011.png)
 
 # Conclusion 
 The Mealy and Moore state machine for sequence 1011 was designed and successfully simulated using Verilog HDL. The testbench verified both the write and read functionalities by simulating the sequence operations and observing the output waveforms.
