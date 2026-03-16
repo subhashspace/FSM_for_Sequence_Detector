@@ -2,13 +2,13 @@
 # EXP NO.6.A. Sequence Detector Using Moore Machine and Mealy Machine
 
 # Aim
-To design and simulate a Finite-State-Machine-for-Sequence-Detector-1011 using Verilog HDL, and verify its functionality through a testbench in the Vivado 2023.1 environment.
+To design and simulate a Finite-State-Machine-for-Sequence-Detector-1011 using Verilog HDL, and verify its functionality through a testbench in the Vivado 2024.2 environment.
 
 # Apparatus Required
-Vivado 2023.1
+Vivado 2024.2
 
 # Procedure
-1.  Launch Vivado 2023.1 Open Vivado and create a new project.
+1.  Launch Vivado 2024.2 Open Vivado and create a new project.
 2.  Design the Verilog Code Write the Verilog code for the RAM,ROM,FIFO Create the Testbench Write a testbench to simulate the memory behavior.
 3.  The testbench should apply various and monitor the corresponding output.
 4.  Create the Verilog Files Create both the design module and the testbench in the Vivado project. Run Simulation Run the behavioral simulation to verify the output.
@@ -17,18 +17,222 @@ Vivado 2023.1
 
 # Code
 # Mealy 1011
-// Verilog code
 
-// Test bench
+<h3>Verilog Code</h3>
 
-// output Waveform
+```
+module mealy_1011(clk,rst,x,z);
+    input clk,rst,x;
+    output reg z;
+reg [1:0] state, next_state;
+
+parameter S0 = 2'b00,
+          S1 = 2'b01,
+          S2 = 2'b10,
+          S3 = 2'b11;
+
+always @(posedge clk)
+begin
+    if(rst)
+        state <= S0;
+    else
+        state <= next_state;
+end
+
+always @(*)
+begin
+    case(state)
+
+        S0:
+        begin
+            if(x)
+                next_state = S1;
+            else
+                next_state = S0;
+            z = 0;
+        end
+
+        S1:
+        begin
+            if(x)
+                next_state = S1;
+            else
+                next_state = S2;
+            z = 0;
+        end
+
+        S2:
+        begin
+            if(x)
+                next_state = S3;
+            else
+                next_state = S0;
+            z = 0;
+        end
+
+        S3:
+        begin
+            if(x)
+            begin
+                next_state = S1;
+                z = 1;  
+            end
+            else
+            begin
+                next_state = S2;
+                z = 0;
+            end
+        end
+
+        default:
+        begin
+            next_state = S0;
+            z = 0;
+        end
+
+    endcase
+end
+
+endmodule
+```
+
+<h3>Test Bench</h3>
+
+```
+module mealy_1011_tb;
+
+reg clk,rst,x;
+wire z;
+
+mealy_1011 uut (clk,rst,x,z);
+
+always #5 clk = ~clk;
+
+initial
+begin
+    clk = 0;
+    rst = 1;
+    x = 0;
+
+    #10 rst = 0;
+
+    #10 
+    x = 1;
+    #10 
+    x = 0;
+    #10 
+    x = 1;
+    #10 
+    x = 1;
+
+    #10 
+    x = 0;
+    #10 
+    x = 1;
+    #10 
+    x = 1;
+    #10 
+    x = 0;
+
+    #50 $stop;
+end
+
+endmodule
+```
+
+<h3>Output Waveform</h3>
+
+![image]()
 
 # Moore 1011
-// write verilog code for ROM using $random
 
-// Test bench
+<h3>Verilog Code</h3>
 
-// output Waveform
+```
+module moore_1011 (clk,rst,x,z);
+
+    input clk,rst,x;
+    output reg z;
+
+reg [2:0] state;
+reg [2:0] next_state;
+
+reg [3:0] rom [0:31];  
+
+integer i;
+
+initial
+begin
+    for(i = 0; i < 32; i = i + 1)
+        rom[i] = $random;
+end
+
+wire [4:0] addr;
+assign addr = {state, x};
+
+always @(*)
+begin
+    {next_state, z} = rom[addr];
+end
+
+always @(posedge clk or posedge rst)
+begin
+    if(rst)
+        state <= 3'b000;
+    else
+        state <= next_state;
+end
+
+endmodule
+```
+
+<h3>Test Bench</h3>
+
+```
+module moore_1011_tb;
+
+reg clk,rst,x;
+wire z;
+
+moore_1011 uut(clk,rst,x,z);
+
+initial
+begin
+    clk = 0;
+    rst = 1;
+    x = 0;
+
+    #10 
+    rst = 0;
+
+    #10 
+    x = 1;
+    #10 
+    x = 0;
+    #10 
+    x = 1;
+    #10 
+    x = 1;
+
+    #10 
+    x = 0;
+    #10 
+    x = 1;
+    #10 
+    x = 1;
+
+    #50 
+    $stop;
+end
+
+always #5 clk = ~clk;
+
+endmodule
+```
+
+<h3>Output Waveform</h3>
+
+![image]()
 
 # Conclusion 
 The Mealy and Moore state machine for sequence 1011 was designed and successfully simulated using Verilog HDL. The testbench verified both the write and read functionalities by simulating the sequence operations and observing the output waveforms.
